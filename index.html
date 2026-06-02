@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runnymede Science Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- ▼▼▼ FIREBASE-SPECIFIC ▼▼▼  (backend SDK — swap these if the backend changes) -->
+    <!-- Firebase compat SDK, loaded from CDN. Only used by the BACKEND ADAPTER in script.js. -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <!-- ▲▲▲ END FIREBASE-SPECIFIC ▲▲▲ -->
+
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div id="app" class="min-h-screen text-white relative overflow-x-hidden">
+
+    <!-- Background logo -->
+    <div class="fixed inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0">
+        <img src="./assets/Runnymede Logo.png" alt="Runnymede Logo"
+             class="w-[1100px] max-w-[160vw] object-contain opacity-[0.07] blur-sm" />
+    </div>
+
+    <div class="relative z-10 w-full max-w-5xl mx-auto px-4 pb-24">
+
+        <!-- ───────────── Header ───────────── -->
+        <header class="text-center pt-10 pb-6 space-y-3">
+            <div class="flex items-center justify-center gap-3">
+                <img src="./assets/Runnymede Logo.png" alt="" class="w-24 h-24 object-contain drop-shadow-lg" />
+                <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-white drop-shadow-lg">Science Blog</h1>
+            </div>
+            <p class="text-blue-200/80 text-lg">Student posts about science — discoveries, experiments &amp; ideas</p>
+            <div id="header-date" class="text-blue-300/70 font-semibold"></div>
+        </header>
+
+        <!-- ───────────── Controls bar ───────────── -->
+        <div class="sticky top-0 z-20 -mx-4 px-4 py-3 backdrop-blur-xl bg-[#00163d]/70 border-b border-blue-400/15 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                <!-- Time filter -->
+                <div class="flex flex-wrap gap-1.5 bg-[#000d24]/60 border border-blue-500/20 rounded-xl p-1">
+                    <button data-filter="all"   class="filter-btn filter-active px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">All</button>
+                    <button data-filter="today" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">Today</button>
+                    <button data-filter="week"  class="filter-btn px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">Week</button>
+                    <button data-filter="month" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">Month</button>
+                    <button data-filter="year"  class="filter-btn px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">Year</button>
+                </div>
+                <button onclick="openModal()"
+                        class="h-11 px-5 font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg rounded-xl flex items-center justify-center gap-2 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    New Post
+                </button>
+            </div>
+        </div>
+
+        <!-- ───────────── Feed ───────────── -->
+        <div id="status-banner" class="hidden mb-4 px-4 py-3 rounded-xl text-sm"></div>
+        <div id="feed" class="space-y-5"></div>
+        <div id="empty-state" class="hidden text-center py-20 text-blue-200/60">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto mb-4 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            <p class="text-lg">No posts yet for this period.</p>
+            <p class="text-sm opacity-70">Be the first — hit <span class="font-semibold text-blue-300">New Post</span>.</p>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!--                  NEW POST MODAL                 -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div id="modal-overlay" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm overflow-y-auto p-4">
+        <div class="min-h-full flex items-start justify-center py-8">
+            <div class="modal-card w-full max-w-2xl bg-[#001a47]/95 backdrop-blur-xl border border-blue-400/25 shadow-2xl rounded-2xl">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-blue-400/15">
+                    <h2 class="text-2xl font-bold text-white">New Science Post</h2>
+                    <button onclick="closeModal()" class="text-blue-200/60 hover:text-white hover:bg-white/10 rounded-lg p-1.5 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <form id="post-form" class="p-6 space-y-5">
+                    <!-- Credentials -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-sm font-medium text-blue-200">Username <span class="text-blue-400">*</span></label>
+                            <input type="text" id="f-username" required autocomplete="username"
+                                   class="field" placeholder="Your name" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-sm font-medium text-blue-200">Password <span class="text-blue-400">*</span></label>
+                            <input type="password" id="f-password" required autocomplete="current-password"
+                                   class="field" placeholder="Posting password" />
+                        </div>
+                    </div>
+
+                    <div class="h-px bg-blue-400/10"></div>
+
+                    <!-- Title -->
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-medium text-blue-200">Title <span class="text-blue-400">*</span></label>
+                        <input type="text" id="f-title" required maxlength="140" class="field" placeholder="e.g. How black holes bend light" />
+                    </div>
+
+                    <!-- Subject -->
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-medium text-blue-200">Subject</label>
+                        <div class="flex flex-wrap gap-2" id="subject-group">
+                            <button type="button" data-subject="Physics"   class="subject-chip">Physics</button>
+                            <button type="button" data-subject="Chemistry" class="subject-chip">Chemistry</button>
+                            <button type="button" data-subject="Biology"   class="subject-chip">Biology</button>
+                            <button type="button" data-subject="General"   class="subject-chip subject-active">All Sciences</button>
+                        </div>
+                    </div>
+
+                    <!-- Body (type) -->
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-medium text-blue-200">Write your post <span class="text-blue-400">*</span></label>
+                        <textarea id="f-body" required rows="6" class="field resize-y" placeholder="Type your thoughts, findings or explanation here…"></textarea>
+                    </div>
+
+                    <!-- Links -->
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-medium text-blue-200">Links <span class="text-blue-300/50 text-xs">(optional)</span></label>
+                        <div id="links-container" class="space-y-2"></div>
+                        <button type="button" onclick="addLinkField()" class="text-sm text-blue-300 hover:text-blue-200 font-medium flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                            Add a link
+                        </button>
+                    </div>
+
+                    <!-- Photos -->
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-medium text-blue-200">Photos <span class="text-blue-300/50 text-xs">(optional)</span></label>
+                        <label class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-blue-400/30 rounded-xl py-6 cursor-pointer hover:border-blue-400/60 hover:bg-blue-500/5 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-300/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <span class="text-sm text-blue-200/70">Tap to attach photos</span>
+                            <input type="file" id="f-photos" accept="image/*" multiple class="hidden" onchange="handlePhotos(event)" />
+                        </label>
+                        <div id="photo-previews" class="flex flex-wrap gap-2 mt-2"></div>
+                    </div>
+
+                    <!-- Error -->
+                    <div id="form-error" class="hidden text-sm text-red-300 bg-red-500/15 border border-red-400/30 rounded-lg px-3 py-2"></div>
+
+                    <!-- Submit -->
+                    <div class="flex gap-3 pt-1">
+                        <button type="button" onclick="closeModal()" class="flex-1 h-12 rounded-xl border border-blue-400/25 text-blue-100 hover:bg-white/5 font-semibold transition-colors">Cancel</button>
+                        <button type="submit" id="submit-btn" class="flex-1 h-12 rounded-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg transition-colors flex items-center justify-center gap-2">
+                            Publish Post
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image lightbox -->
+    <div id="lightbox" class="hidden fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="" class="max-w-full max-h-full rounded-lg shadow-2xl" />
+    </div>
+</div>
+
+<script src="./script.js"></script>
+</body>
+</html>
