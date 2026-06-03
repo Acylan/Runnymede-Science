@@ -111,6 +111,33 @@ let selectedSubject = "General";
 let attachedPhotos = [];      // base64 data URLs
 
 /* ───────────────────────────────────────────────
+   DEMO DATA  (preview only)  <<< DEMO
+   Shown ONLY when the backend isn't configured, so you can see what a
+   real post looks like. Delete this whole block once Firebase is live —
+   nothing else depends on it.
+   `createdAt` is a plain Date here; Backend.toDate() handles it the same
+   as a Firestore Timestamp.
+   ─────────────────────────────────────────────── */
+const DEMO_POSTS = [
+    {
+        id: "demo-1",
+        title: "Cannymede, Sending a Can to +1000m above surface ",
+        author: "Alan Chen",
+        subject: "Physics",
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),   // 2 hours ago
+        body:
+            "Our 2026 graduates designed and launched a CanSat to an altitude of over 1,000 m, doing everything independently—from writing the code to building the antennas used to communicate with it. Their primary mission was to measure pressure and temperature; their secondary mission was to convert [source] energy into electricity.",
+        links: [
+            "https://www.instagram.com/project_cannymede/"
+        ],
+        // Project Cannymede logo, saved locally in assets/ (Instagram CDN links expire).
+        images: [
+            "./assets/cannymede.jpg"
+        ]
+    }
+];
+
+/* ───────────────────────────────────────────────
    STARTUP
    ─────────────────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", () => {
@@ -135,11 +162,12 @@ function updateHeaderDate() {
 function subscribeToPosts() {
     if (!Backend.ready) {
         showBanner(
-            "⚠️ The backend is not configured yet. Open <code>script.js</code> and paste the " +
-            "client's config into <code>firebaseConfig</code> (top of the BACKEND ADAPTER block). " +
-            "Until then, posts can't be saved or loaded.",
+            "⚠️ The backend is not configured yet — showing an <strong>example post</strong> below so you can " +
+            "preview the look. Open <code>script.js</code> and paste the client's config into " +
+            "<code>firebaseConfig</code> (top of the BACKEND ADAPTER block) to go live.",
             "warn"
         );
+        allPosts = DEMO_POSTS;        // <<< DEMO: sample data, shown only when backend is offline
         renderFeed();
         return;
     }
@@ -220,10 +248,14 @@ function buildPostCard(p) {
     // Photos
     let photos = "";
     if (Array.isArray(p.images) && p.images.length) {
-        photos = `<div class="grid ${p.images.length === 1 ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3"} gap-2 mt-4">` +
+        // Images keep their natural aspect ratio: small images stay small,
+        // large ones scale down to fit. Width adapts to each image's shape,
+        // capped by a max height so nothing is cropped or stretched.
+        // flex-wrap lets several photos sit side-by-side at their natural widths.
+        photos = `<div class="flex flex-wrap gap-2 mt-4">` +
             p.images.map(src =>
                 `<img src="${src}" alt="" loading="lazy"
-                      class="w-full h-40 object-cover rounded-xl cursor-pointer hover:opacity-90 transition"
+                      class="max-w-full ${p.images.length === 1 ? "max-h-[480px]" : "max-h-72"} w-auto h-auto object-contain rounded-xl border border-blue-400/15 bg-[#000d24]/40 cursor-pointer hover:opacity-90 transition"
                       onclick="openLightbox(this.src)" />`
             ).join("") + `</div>`;
     }
