@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM Lab — Runnymede Clubs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./clubs.css">
+</head>
+<body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="logo-watermark"><img src="./assets/Runnymede%20Logo.png" alt="" /></div>
+
+    <div class="relative z-10 w-full max-w-5xl mx-auto px-4 pb-24">
+
+        <!-- Top nav -->
+        <div class="flex items-center justify-between pt-6">
+            <a href="./clubs.html" class="inline-flex items-center gap-2 text-blue-200/80 hover:text-white text-sm font-semibold transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                All Clubs
+            </a>
+            <img src="./assets/Runnymede%20Logo.png" alt="Runnymede" class="w-10 h-10 object-contain opacity-90" />
+        </div>
+
+        <!-- Header -->
+        <header class="text-center pt-8 pb-10 fade-up">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-blue-400/20 text-blue-200/80 text-xs font-semibold tracking-wide mb-4">
+                <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> STEM CLUB · INTERACTIVE LAB
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight drop-shadow-lg">
+                <span class="bg-gradient-to-r from-sky-300 via-blue-300 to-indigo-300 bg-clip-text text-transparent">STEM</span> Lab
+            </h1>
+            <p class="text-blue-200/80 text-lg mt-3 max-w-xl mx-auto">
+                Four fields. Sixteen experiments. Hover a letter to reveal it, then pick a box to dive in.
+            </p>
+        </header>
+
+        <!-- STEM 2×2 grid -->
+        <section id="stem-grid" class="grid grid-cols-2 gap-4 md:gap-6"></section>
+
+        <p id="hint" class="text-center text-blue-300/60 text-sm mt-5">
+            Hover to reveal the word · Click a box to open its experiments
+        </p>
+
+        <!-- Experiments (slides down) -->
+        <section id="experiments" class="collapsible mt-8">
+            <div class="clip">
+                <div class="pt-4">
+                    <div class="flex items-center gap-3 mb-6" id="exp-header"></div>
+                    <div id="exp-grid" class="exp-grid grid grid-cols-2 gap-4 md:gap-6"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Experiment detail "place" -->
+    <div id="detail" class="detail-panel"></div>
+
+    <script>
+    /* ============================================================
+       STEM Lab — content is IMPORTED from the per-acronym files in
+       ./content/. Each file holds one discipline's box metadata and
+       its experiments. We fetch them, parse the HTML, and render.
+       (Served over http via the local preview server, fetch works.)
+       ============================================================ */
+    const CONTENT_FILES = {
+        science:     "./content/science.html",
+        technology:  "./content/technology.html",
+        engineering: "./content/engineering.html",
+        maths:       "./content/maths.html"
+    };
+
+    const ICONS = {
+        beaker: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.75 3.1v5.7a2.25 2.25 0 0 1-.66 1.6L5 14.5M9.75 3.1c-.25 0-.5 0-.75.08m.75-.08a24 24 0 0 1 4.5 0m0 0v5.7c0 .6.24 1.17.66 1.6L19.8 15.3M14.25 3.1c.25 0 .5 0 .75.08M19.8 15.3l-1.57.4A9 9 0 0 1 12 15a9 9 0 0 0-6.23-.7L5 14.5m14.8.8 1.4 1.4c1.23 1.23.65 3.32-1.07 3.61A48 48 0 0 1 12 21c-2.77 0-5.49-.24-8.13-.69-1.72-.29-2.3-2.38-1.07-3.6L5 14.5"/></svg>`,
+        chip: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z"/></svg>`,
+        cog: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 3.94c.09-.54.56-.94 1.11-.94h2.6c.55 0 1.02.4 1.11.94l.21 1.28c.06.37.31.69.65.87l.22.13c.32.2.72.26 1.07.12l1.22-.45c.51-.2 1.09 0 1.37.49l1.3 2.25c.27.47.16 1.07-.26 1.43l-1 .83c-.3.24-.44.61-.43.99v.26c-.01.38.13.75.43.99l1 .83c.42.35.53.96.26 1.43l-1.3 2.25c-.28.48-.86.68-1.37.49l-1.22-.46c-.35-.13-.75-.07-1.07.12l-.22.13c-.33.18-.58.5-.64.87l-.21 1.28c-.09.54-.56.94-1.11.94h-2.6c-.55 0-1.02-.4-1.11-.94l-.21-1.28c-.06-.37-.31-.69-.64-.87l-.22-.13c-.33-.2-.72-.26-1.08-.12l-1.22.46c-.51.19-1.09-.01-1.37-.49l-1.3-2.25c-.27-.47-.16-1.08.26-1.43l1-.83c.3-.24.44-.61.43-.99v-.26c.01-.38-.14-.75-.43-.99l-1-.83a1.13 1.13 0 0 1-.26-1.43l1.3-2.25c.28-.48.86-.69 1.37-.49l1.22.45c.36.14.75.08 1.08-.12l.22-.13c.33-.18.58-.5.64-.87l.21-1.28Z"/><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>`,
+        variable: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.75 3A24 24 0 0 0 3 12c0 3.18.62 6.22 1.75 9M19.25 3C20.38 5.78 21 8.82 21 12c0 3.18-.62 6.22-1.75 9M9 8.25h6m-6 7.5h6"/></svg>`,
+        arrow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-7-7 7 7-7 7"/></svg>`
+    };
+
+    const stemGrid   = document.getElementById('stem-grid');
+    const expSection = document.getElementById('experiments');
+    const expHeader  = document.getElementById('exp-header');
+    const expGrid    = document.getElementById('exp-grid');
+    const detail     = document.getElementById('detail');
+    const DATA = {};          // filled from the imported files
+    let activeKey = null;
+
+    /* ---------- Load & parse the imported content files ---------- */
+    async function loadDiscipline(key) {
+        const res = await fetch(CONTENT_FILES[key]);
+        if (!res.ok) throw new Error(`${CONTENT_FILES[key]} → ${res.status}`);
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        const meta = doc.querySelector('.discipline');
+        const text = (el) => el ? el.textContent.trim() : '';
+        const experiments = [...doc.querySelectorAll('article.experiment')].map(a => ({
+            emoji:    a.dataset.emoji,
+            time:     a.dataset.time,
+            level:    a.dataset.level,
+            title:    text(a.querySelector('h3')),
+            blurb:    text(a.querySelector('.blurb')),
+            overview: text(a.querySelector('.overview')),
+            materials:[...a.querySelectorAll('.materials li')].map(li => li.textContent.trim()),
+            steps:    [...a.querySelectorAll('.method li')].map(li => li.textContent.trim()),
+            science:  text(a.querySelector('.science')),
+            safety:   text(a.querySelector('.safety')),
+            result:   text(a.querySelector('.result'))
+        }));
+        return {
+            key,
+            letter: meta.dataset.letter,
+            word:   meta.dataset.word,
+            tag:    meta.dataset.tag,
+            accent: meta.dataset.accent,
+            soft:   meta.dataset.soft,
+            icon:   meta.dataset.icon,
+            experiments
+        };
+    }
+
+    async function init() {
+        try {
+            const keys = Object.keys(CONTENT_FILES);
+            const loaded = await Promise.all(keys.map(loadDiscipline));
+            keys.forEach((k, i) => DATA[k] = loaded[i]);
+            renderStemGrid();
+        } catch (err) {
+            stemGrid.classList.remove('grid', 'grid-cols-2');
+            stemGrid.innerHTML = `
+                <div class="glass p-6 text-center text-blue-100/90">
+                    <p class="text-lg font-bold mb-1">Couldn't load the experiment content.</p>
+                    <p class="text-sm text-blue-200/70">Open this page through the local server (the preview), not by
+                    double-clicking the file — browsers block importing local files over <code>file://</code>.</p>
+                    <p class="text-xs text-blue-300/50 mt-3">${err.message}</p>
+                </div>`;
+            document.getElementById('hint').style.display = 'none';
+        }
+    }
+
+    /* ---------- Render the 4 STEM discipline boxes ---------- */
+    function renderStemGrid() {
+        stemGrid.innerHTML = '';
+        Object.values(DATA).forEach(d => {
+            const card = document.createElement('button');
+            card.className = 'stem-card';
+            card.style.setProperty('--accent', d.accent);
+            card.style.setProperty('--soft', d.soft);
+            card.setAttribute('aria-label', d.word);
+            card.dataset.key = d.key;
+            card.innerHTML = `
+                <div class="stem-watermark">${ICONS[d.icon] || ''}</div>
+                <div class="stem-letter">${d.letter}</div>
+                <div class="stem-body">
+                    <div class="stem-word">${d.word}</div>
+                    <div class="stem-tag">${d.tag}</div>
+                    <span class="stem-cta">${d.experiments.length} experiments ${ICONS.arrow}</span>
+                </div>`;
+            card.addEventListener('click', () => selectDiscipline(d.key));
+            stemGrid.appendChild(card);
+        });
+    }
+
+    /* ---------- Open a discipline → slide down its experiments ---------- */
+    function selectDiscipline(key) {
+        const d = DATA[key];
+        const reselect = activeKey === key && expSection.classList.contains('open');
+
+        document.querySelectorAll('.stem-card').forEach(c =>
+            c.classList.toggle('selected', c.dataset.key === key));
+
+        if (reselect) { scrollToExperiments(); return; }
+
+        const render = () => {
+            activeKey = key;
+            expSection.style.setProperty('--accent', d.accent);
+            expSection.style.setProperty('--soft', d.soft);
+
+            expHeader.innerHTML = `
+                <div class="w-11 h-11 rounded-xl grid place-items-center"
+                     style="background:${d.soft};border:1px solid ${d.accent};color:${d.accent}">
+                    ${ICONS[d.icon] || ''}
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-extrabold leading-tight">${d.word} experiments</h2>
+                    <p class="text-blue-200/70 text-sm">Pick one to see the full step-by-step guide.</p>
+                </div>`;
+
+            expGrid.innerHTML = '';
+            d.experiments.forEach((exp, i) => {
+                const card = document.createElement('button');
+                card.className = 'exp-card';
+                card.style.setProperty('--accent', d.accent);
+                card.style.setProperty('--soft', d.soft);
+                card.style.animationDelay = (i * 0.07) + 's';
+                card.innerHTML = `
+                    <div class="exp-emoji">${exp.emoji}</div>
+                    <h3 class="text-lg font-bold leading-snug">${exp.title}</h3>
+                    <p class="text-blue-200/70 text-sm mt-1">${exp.blurb}</p>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="chip">⏱ ${exp.time}</span>
+                        <span class="chip">📊 ${exp.level}</span>
+                    </div>`;
+                card.addEventListener('click', () => openExperiment(key, i));
+                expGrid.appendChild(card);
+            });
+            expGrid.classList.remove('swap');
+        };
+
+        if (expSection.classList.contains('open')) {
+            expGrid.classList.add('swap');
+            setTimeout(render, 200);
+        } else {
+            render();
+            expSection.classList.add('open');
+        }
+        scrollToExperiments();
+    }
+
+    function scrollToExperiments() {
+        setTimeout(() => expSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+    }
+
+    /* ---------- Experiment detail "place" ---------- */
+    function openExperiment(key, index) {
+        const d = DATA[key];
+        const exp = d.experiments[index];
+
+        const materials = exp.materials.map(m => `
+            <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 mt-0.5 flex-none" style="color:${d.accent}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                <span>${m}</span>
+            </li>`).join('');
+
+        const steps = exp.steps.map((s, i) => `
+            <li class="flex items-start gap-3">
+                <span class="step-num">${i + 1}</span>
+                <span class="pt-1">${s}</span>
+            </li>`).join('');
+
+        detail.innerHTML = `
+            <div class="detail-hero" style="--accent:${d.accent};--soft:${d.soft}">
+                <div class="max-w-3xl mx-auto px-4 pt-6 pb-10">
+                    <div class="flex items-center justify-between">
+                        <button id="detail-back" class="inline-flex items-center gap-2 text-blue-100/90 hover:text-white text-sm font-semibold transition-colors">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                            Back to ${d.word}
+                        </button>
+                        <span class="chip" style="background:${d.soft};border-color:${d.accent};color:#fff">${d.word}</span>
+                    </div>
+                    <div class="mt-8 flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-2xl grid place-items-center text-3xl" style="background:${d.soft};border:1px solid ${d.accent}">${exp.emoji}</div>
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">${exp.title}</h1>
+                            <div class="flex flex-wrap gap-2 mt-2">
+                                <span class="chip">⏱ ${exp.time}</span>
+                                <span class="chip">📊 ${exp.level}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-blue-100/90 text-lg mt-6 leading-relaxed">${exp.overview}</p>
+                </div>
+            </div>
+
+            <div class="max-w-3xl mx-auto px-4 py-10 space-y-8" style="--accent:${d.accent};--soft:${d.soft}">
+                <section>
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><span style="color:${d.accent}">🧰</span> What you'll need</h2>
+                    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-blue-50/90">${materials}</ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><span style="color:${d.accent}">🧭</span> Method</h2>
+                    <ol class="space-y-4 text-blue-50/90">${steps}</ol>
+                </section>
+
+                <section class="callout" style="background:${d.soft};border-color:${d.accent}">
+                    <h2 class="text-lg font-bold mb-2 flex items-center gap-2"><span>💡</span> The science behind it</h2>
+                    <p class="text-blue-50/90 leading-relaxed">${exp.science}</p>
+                </section>
+
+                <section class="callout" style="background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.5)">
+                    <h2 class="text-lg font-bold mb-2 flex items-center gap-2 text-amber-200"><span>⚠️</span> Safety first</h2>
+                    <p class="text-amber-50/90 leading-relaxed">${exp.safety}</p>
+                </section>
+
+                <section class="callout" style="background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.5)">
+                    <h2 class="text-lg font-bold mb-2 flex items-center gap-2 text-green-200"><span>✅</span> What you should see</h2>
+                    <p class="text-green-50/90 leading-relaxed">${exp.result}</p>
+                </section>
+
+                <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                    <button id="detail-back-2" class="flex-1 h-12 rounded-xl border border-blue-400/25 text-blue-100 hover:bg-white/5 font-semibold transition-colors">← Back to experiments</button>
+                    <button id="detail-next" class="flex-1 h-12 rounded-xl font-bold text-[#000d24] transition-transform hover:-translate-y-0.5" style="background:${d.accent}">Next experiment →</button>
+                </div>
+            </div>`;
+
+        detail.querySelector('#detail-back').addEventListener('click', closeDetail);
+        detail.querySelector('#detail-back-2').addEventListener('click', closeDetail);
+        detail.querySelector('#detail-next').addEventListener('click', () => {
+            openExperiment(key, (index + 1) % d.experiments.length);
+            detail.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        detail.scrollTop = 0;
+        detail.classList.add('open');
+        document.body.classList.add('locked');
+    }
+
+    function closeDetail() {
+        detail.classList.remove('open');
+        document.body.classList.remove('locked');
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && detail.classList.contains('open')) closeDetail();
+    });
+
+    init();
+    </script>
+</body>
+</html>

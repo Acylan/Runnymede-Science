@@ -1,0 +1,93 @@
+<!-- ════════════════════════════════════════════════════════════════
+     TECHNOLOGY — content import file for the STEM Lab. See science.html
+     for the format. Edit here to change the Technology experiments.
+     ════════════════════════════════════════════════════════════════ -->
+<div class="discipline"
+     data-key="technology" data-letter="T" data-word="Technology"
+     data-tag="Make the machine think."
+     data-accent="#a78bfa" data-soft="rgba(167,139,250,.22)" data-icon="chip"></div>
+
+<article class="experiment" data-emoji="🔢" data-time="40 min" data-level="Easy">
+    <h3>Number-Guessing Game</h3>
+    <p class="blurb">Write your first real program.</p>
+    <p class="overview">Build a short program that picks a secret number and tells you whether your guess is too high or too low until you win.</p>
+    <ul class="materials">
+        <li>A computer</li>
+        <li>Scratch, Python, or an online editor like replit</li>
+        <li>Paper to plan the logic</li>
+    </ul>
+    <ol class="method">
+        <li>Plan the logic: pick a random number, ask for a guess, compare, repeat.</li>
+        <li>In Python, use random.randint(1, 100) for the secret number.</li>
+        <li>Use a while loop to keep asking until the guess is right.</li>
+        <li>Use if / elif / else to say 'too high', 'too low' or 'correct!'.</li>
+        <li>Count and display how many guesses it took.</li>
+    </ol>
+    <p class="science">This introduces the core ideas of computer science: variables store the secret number, a loop repeats the question, and conditionals make decisions. If you always guess the middle of the range you're doing a binary search — doubling the range only adds one extra guess, which is why it's so efficient.</p>
+    <p class="safety">No hazards — just remember to save your work.</p>
+    <p class="result">A working game that tells you how many tries it took to win.</p>
+</article>
+
+<article class="experiment" data-emoji="🔐" data-time="30 min" data-level="Easy">
+    <h3>Crack the Caesar Cipher</h3>
+    <p class="blurb">Send secret messages, then break them.</p>
+    <p class="overview">Encode messages by shifting the alphabet, then learn how codebreakers crack the code without the key.</p>
+    <ul class="materials">
+        <li>Paper and pen</li>
+        <li>Two alphabet strips (a cipher wheel)</li>
+        <li>Optional: a computer</li>
+    </ul>
+    <ol class="method">
+        <li>Choose a shift, e.g. +3 so A→D, B→E, C→F.</li>
+        <li>Encode a message by shifting every letter.</li>
+        <li>Swap with a friend and decode using the reverse shift.</li>
+        <li>Try to break a message without the key by testing all 25 shifts.</li>
+        <li>Optional: write a program to do it instantly.</li>
+    </ol>
+    <p class="science">This is cryptography. A Caesar cipher has only 25 possible keys, so a computer cracks it by brute force in a fraction of a second. Frequency analysis helps too — 'E' is the most common letter in English, so spotting it reveals the shift. It shows why modern encryption needs astronomically many possible keys.</p>
+    <p class="safety">No hazards.</p>
+    <p class="result">Messages your friends can read but eavesdroppers can't — until they apply the maths.</p>
+</article>
+
+<article class="experiment" data-emoji="🎬" data-time="20 min" data-level="Easy">
+    <h3>Make a Thaumatrope</h3>
+    <p class="blurb">Discover the trick behind every screen.</p>
+    <p class="overview">Build a spinning two-sided card that fuses two separate pictures into one — the illusion behind film and video.</p>
+    <ul class="materials">
+        <li>Card or cardboard disc</li>
+        <li>String (or a pencil)</li>
+        <li>Markers</li>
+        <li>Scissors</li>
+    </ul>
+    <ol class="method">
+        <li>Draw a bird on one side and an empty cage on the other (flip it so they line up).</li>
+        <li>Make two holes and thread string through, or tape the disc to a pencil.</li>
+        <li>Spin it fast by twisting the string.</li>
+        <li>Watch the bird appear inside the cage.</li>
+        <li>Make your own pairs, or build a flip-book for more frames.</li>
+    </ol>
+    <p class="science">Because our eyes and brain blend rapid images together, two pictures shown fast enough merge into one. Films and screens use the same trick, showing 24–60 still frames every second so motion looks smooth. The number of images per second is called the frame rate.</p>
+    <p class="safety">Take care with scissors.</p>
+    <p class="result">Two separate drawings that visually combine into one when spun.</p>
+</article>
+
+<article class="experiment" data-emoji="🖐️" data-time="20 min" data-level="Medium">
+    <h3>Count to 31 on One Hand</h3>
+    <p class="blurb">Think like a computer in binary.</p>
+    <p class="overview">Use your fingers as a computer's switches to count far past five and write messages in binary.</p>
+    <ul class="materials">
+        <li>Your hands</li>
+        <li>Paper</li>
+        <li>Optional: a binary chart</li>
+    </ul>
+    <ol class="method">
+        <li>Give each finger a value: thumb 1, index 2, middle 4, ring 8, little 16.</li>
+        <li>A raised finger means 1 (on); a lowered finger means 0 (off).</li>
+        <li>Add up the raised fingers to make any number from 0 to 31.</li>
+        <li>Write each number as 5 binary digits, e.g. 13 = 01101.</li>
+        <li>Encode a letter using its number code.</li>
+    </ol>
+    <p class="science">Computers store everything as binary — bits that are either on (1) or off (0). Each place value doubles: 1, 2, 4, 8, 16. With n bits you can make 2ⁿ different combinations, which is why five fingers reach 31. Text is stored by giving every character its own binary code (ASCII or Unicode).</p>
+    <p class="safety">No hazards.</p>
+    <p class="result">You can count to 31 on five fingers and write messages as 1s and 0s.</p>
+</article>
