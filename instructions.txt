@@ -1,0 +1,10 @@
+git status  (ver cambios)
+
+git add .
+
+git commit -m "mensage"
+
+git push  (para que el codigo este en la nube y pueda hacer git pull)
+
+
+git pull origin main (para que el codigo actualizado este en tu ordenador)
