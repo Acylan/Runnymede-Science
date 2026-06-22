@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CanSat — Runnymede Clubs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./clubs.css">
+</head>
+<body style="--accent:#fb7185; --soft:rgba(251,113,133,.20);">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2" style="background:#fb7185"></div>
+    <div class="logo-watermark"><img src="./assets/Runnymede%20Logo.png" alt="" /></div>
+
+    <div class="relative z-10 w-full max-w-4xl mx-auto px-4 pb-24">
+
+        <!-- Top nav -->
+        <div class="flex items-center justify-between pt-6">
+            <a href="./clubs.html" class="inline-flex items-center gap-2 text-blue-200/80 hover:text-white text-sm font-semibold transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                All Clubs
+            </a>
+            <img src="./assets/Runnymede%20Logo.png" alt="Runnymede" class="w-10 h-10 object-contain opacity-90" />
+        </div>
+
+        <!-- Header -->
+        <header class="text-center pt-8 pb-10 fade-up">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-rose-400/30 text-rose-200/90 text-xs font-semibold tracking-wide mb-4">
+                <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span> CANSAT CLUB
+            </div>
+            <div class="text-6xl mb-3">🛰️</div>
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight drop-shadow-lg">
+                <span class="bg-gradient-to-r from-rose-300 via-pink-300 to-orange-200 bg-clip-text text-transparent">CanSat</span>
+            </h1>
+            <p class="text-blue-200/80 text-lg mt-3 max-w-2xl mx-auto">
+                A real engineering challenge: fit an entire working satellite inside a drinks can, launch it,
+                and have it run a mission as it parachutes back to Earth.
+            </p>
+        </header>
+
+        <!-- What is CanSat -->
+        <section class="glass p-6 md:p-8 fade-up">
+            <h2 class="text-2xl font-bold mb-3 flex items-center gap-2">🥤 What is a CanSat?</h2>
+            <p class="text-blue-100/85 leading-relaxed">
+                A CanSat is a tiny satellite that must fit the size and shape of a standard 330&nbsp;ml drinks can —
+                about 115&nbsp;mm tall and 66&nbsp;mm across. Inside that space the team packs a power supply, a
+                microcontroller, sensors, and a radio. A rocket or drone carries it up to roughly 1&nbsp;km, releases it,
+                and the CanSat must survive the fall, collect data, and send it back. It's the smallest way to experience
+                the full life cycle of a space mission: design, build, test, launch, and analyse.
+            </p>
+        </section>
+
+        <!-- The Mission -->
+        <section class="mt-8">
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">🎯 The mission</h2>
+            <div class="grid sm:grid-cols-2 gap-4 md:gap-6">
+                <div class="feature-card fade-up">
+                    <div class="feature-icon">📡</div>
+                    <h3 class="font-bold text-lg">Primary mission</h3>
+                    <p class="text-blue-200/75 text-sm mt-1.5 leading-relaxed">
+                        Measure air <strong>temperature</strong> and <strong>pressure</strong> at least once per second
+                        during the descent and transmit the readings live to the ground station as telemetry.
+                    </p>
+                </div>
+                <div class="feature-card fade-up" style="animation-delay:.07s">
+                    <div class="feature-icon">🪂</div>
+                    <h3 class="font-bold text-lg">Secondary mission</h3>
+                    <p class="text-blue-200/75 text-sm mt-1.5 leading-relaxed">
+                        Your team's own challenge — for example a controlled descent (parachute or auto-gyro),
+                        GPS tracking, or landing accuracy. This is where creativity earns marks.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team roles -->
+        <section class="mt-10">
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">🧑‍🚀 Team roles</h2>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="feature-card fade-up">
+                    <div class="feature-icon">🔧</div>
+                    <h3 class="font-bold">Structure</h3>
+                    <p class="text-blue-200/70 text-sm mt-1">Designs the chassis and recovery system so everything fits and survives landing.</p>
+                </div>
+                <div class="feature-card fade-up" style="animation-delay:.06s">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="font-bold">Electronics</h3>
+                    <p class="text-blue-200/70 text-sm mt-1">Wires up the sensors, microcontroller, battery and radio.</p>
+                </div>
+                <div class="feature-card fade-up" style="animation-delay:.12s">
+                    <div class="feature-icon">💻</div>
+                    <h3 class="font-bold">Software</h3>
+                    <p class="text-blue-200/70 text-sm mt-1">Programs the flight code and the ground-station software that logs the data.</p>
+                </div>
+                <div class="feature-card fade-up" style="animation-delay:.18s">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="font-bold">Data & Comms</h3>
+                    <p class="text-blue-200/70 text-sm mt-1">Analyses the telemetry, makes the graphs and presents the results.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="mt-10 glass p-6 md:p-8 fade-up">
+            <h2 class="text-2xl font-bold mb-5 flex items-center gap-2">🗓️ How a season runs</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3 class="font-bold">1 · Design review</h3>
+                    <p class="text-blue-200/70 text-sm mt-1">Plan the mission, sketch the design and prove it can fit and work on paper.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3 class="font-bold">2 · Build & integrate</h3>
+                    <p class="text-blue-200/70 text-sm mt-1">Assemble the electronics, write the code and pack it all into the can.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3 class="font-bold">3 · Test</h3>
+                    <p class="text-blue-200/70 text-sm mt-1">Drop tests, range tests and a full dress rehearsal of the telemetry link.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3 class="font-bold">4 · Launch day</h3>
+                    <p class="text-blue-200/70 text-sm mt-1">The CanSat flies, runs its mission and streams data to the ground station.</p>
+                </div>
+                <div class="timeline-item" style="padding-bottom:0">
+                    <h3 class="font-bold">5 · Report</h3>
+                    <p class="text-blue-200/70 text-sm mt-1">Analyse the results and present what you learned.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Get involved -->
+        <section class="mt-10 text-center fade-up">
+            <div class="glass p-8" style="background:var(--soft);border-color:var(--accent)">
+                <h2 class="text-2xl font-bold mb-2">Want to join the CanSat team?</h2>
+                <p class="text-blue-100/85 max-w-xl mx-auto">No experience needed — there's a role for every interest, from
+                soldering and coding to design and presenting. Speak to the STEM coordinator to sign up.</p>
+                <a href="./clubs.html" class="inline-flex items-center gap-2 mt-5 h-12 px-6 rounded-xl font-bold text-[#000d24]" style="background:var(--accent)">
+                    Explore other clubs
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M4 12h16m-7-7 7 7-7 7"/></svg>
+                </a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
